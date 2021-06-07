@@ -18,6 +18,17 @@ blueprint:
       selector:
         entity:
           domain: input_boolean
+    coolingoff_delay:
+      name: Cooling Off Delay
+      description: >-
+        Amount of time for cooling off the debounced input boolean.
+      selector:
+        number:
+          min: 1
+          max: 300
+          mode: box
+          unit_of_measurement: seconds
+      default: 1
     uptime_sensor:
       name: Home Assistant Uptime sensor
       description: >-
@@ -42,6 +53,6 @@ action:
   - service: input_boolean.turn_on
     entity_id: !input input_boolean
   - delay:
-      seconds: 1
+      seconds: !input coolingoff_delay
   - service: input_boolean.turn_off
     entity_id: !input input_boolean
