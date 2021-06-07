@@ -1,0 +1,47 @@
+blueprint:
+  name: Alternating Binary Sensor
+  description: >-
+    Translates an alternating binary sensor into a debounced input boolean.
+  domain: automation
+  input:
+    binary_sensor:
+      name: Alternating Binary Sensor
+      description: >-
+        The alternating binary sensor to translate and debounce.
+      selector:
+        entity:
+          domain: binary_sensor
+    input_boolean:
+      name: Debounced Input Boolean
+      description: >-
+        The input boolean that will represent the debounced sensor signal.
+      selector:
+        entity:
+          domain: input_boolean
+    uptime_sensor:
+      name: Home Assistant Uptime sensor
+      description: >-
+        A numeric sensor representing the uptime (in minutes) of Home Assistant.
+        Used to ensure that Home Assistant started before processing the automation.
+      selector:
+        entity:
+          domain: sensor
+
+mode: restart
+
+trigger:
+  - platform: state
+    entity_id: !input binary_sensor
+
+condition:
+  - condition: numeric_state
+    entity_id: !input uptime_sensor
+    above: 1
+
+action:
+  - service: input_boolean.turn_on
+    entity_id: !input input_boolean
+  - delay:
+      seconds: 1
+  - service: input_boolean.turn_off
+    entity_id: !input input_boolean
